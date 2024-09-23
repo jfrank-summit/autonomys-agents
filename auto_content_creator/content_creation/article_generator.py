@@ -8,6 +8,7 @@ from .agents import (
     create_research_agent,
 )
 from .web_search import web_search
+from .config import get_llm_config_for_autogen
 
 logging.basicConfig(level=logging.INFO)
 
@@ -281,8 +282,13 @@ def revise_article_with_feedback(
     title_prompt = (
         f"Generate a concise and engaging title for the revised article about {topic}."
     )
-    title = article_agent.generate_reply(
+    title_response = article_agent.generate_reply(
         messages=[{"role": "user", "content": title_prompt}]
+    )
+    title = (
+        title_response["content"]
+        if isinstance(title_response, dict)
+        else str(title_response)
     )
 
     # Return the same number of values as generate_article
@@ -296,10 +302,12 @@ def revise_article_with_feedback(
 
 
 def generate_article(category: str, topic: str):
+    llm_config = get_llm_config_for_autogen()
     manager_agent = ConversableAgent(
         name="Manager",
         human_input_mode="NEVER",
         max_consecutive_auto_reply=0,  # Prevent auto-replies from the manager
+        llm_config=llm_config,
     )
     article_agent = create_article_generator_agent(category)
     fact_checker_agent = create_fact_checker_agent(category)
@@ -331,8 +339,13 @@ def generate_article(category: str, topic: str):
     title_prompt = (
         f"Generate a concise and engaging title for an article about {topic}."
     )
-    title = article_agent.generate_reply(
+    title_response = article_agent.generate_reply(
         messages=[{"role": "user", "content": title_prompt}]
+    )
+    title = (
+        title_response["content"]
+        if isinstance(title_response, dict)
+        else str(title_response)
     )
 
     # Proceed with fact-checking and revision

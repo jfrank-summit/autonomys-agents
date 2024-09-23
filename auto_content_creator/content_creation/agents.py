@@ -1,8 +1,9 @@
 from autogen.agentchat import AssistantAgent
-from .config import llm_config
+from .config import get_llm_config_for_autogen
 
 
 def create_article_generator_agent(category: str):
+    llm_config = get_llm_config_for_autogen()
     return AssistantAgent(
         name="ArticleGenerator",
         system_message=(
@@ -16,6 +17,7 @@ def create_article_generator_agent(category: str):
 
 
 def create_fact_checker_agent(category: str):
+    llm_config = get_llm_config_for_autogen()
     return AssistantAgent(
         name="FactChecker",
         system_message=(
@@ -56,6 +58,7 @@ def create_fact_checker_agent(category: str):
 
 
 def create_research_agent(category: str):
+    llm_config = get_llm_config_for_autogen()
     return AssistantAgent(
         name="ResearchAgent",
         system_message=(
